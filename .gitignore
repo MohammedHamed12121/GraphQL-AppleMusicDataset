@@ -1,0 +1,6 @@
+*.db
+*.csv
+bin/
+obj/
+appleMusic/wwwroot/lib/
+.vs/
