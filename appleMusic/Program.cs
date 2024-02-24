@@ -7,6 +7,8 @@ using System.Text.Json;
 using SQLitePCL;
 using appleMusic.Interfaces;
 using appleMusic.Repositories;
+using appleMusic.Queries;
+using appleMusic.GraphQl.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,12 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<CsvReader>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+
+builder.Services
+    .AddGraphQLServer()
+    .AddQueryType<QueryType>();
+
 
 var app = builder.Build();
 
@@ -80,6 +88,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.MapGraphQL();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -2,18 +2,197 @@
     ViewData["Title"] = "Home Page";
 }
 
+
 <style>
     .flex-container {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
     }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+
+    .music-card {
+    @*margin:100pxauto;*@border-radius: 6px;
+        background: #fff;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+        position: relative;
+        width: 300px;
+        height: 500px;
+
+    @*width:calc(33.33%-10px);*@box-sizing: border-box;
+    @*padding:20px;*@margin-bottom: 20px;
+    }
+
+    .music-card>.image img {
+        position: absolute;
+        z-index: 1;
+        opacity: 0.3;
+        height: 300px;
+        width: 300px;
+    }
+
+    .music-card>.image:after {
+        height: 100px;
+        content: '';
+        top: 200px;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+        background: linear-gradient(rgba(221, 65, 127, 0), #DD417F);
+    }
+
+    .music-card>.wave {
+        position: absolute;
+        height: 750px;
+        width: 750px;
+        opacity: 0.6;
+        left: 0;
+        top: 0;
+        margin-left: -70%;
+        margin-top: -130%;
+        border-radius: 40%;
+        background: radial-gradient(#B01DE8, #F34235);
+        animation: spin 3000ms infinite linear;
+    }
+
+    .music-card>.wave:nth-child(2) {
+        top: 10px;
+        animation: spin 4000ms infinite linear;
+    }
+
+    .music-card>.wave:nth-child(3) {
+        top: 10px;
+        animation: spin 5000ms infinite linear;
+    }
+
+    .music-card>.info {
+        position: absolute;
+        bottom: 25px;
+        left: 0;
+        right: 0;
+        text-align: center;
+    }
+
+    .music-card>.info>.title {
+        font-size: 1.3em;
+        font-weight: 400;
+        font-family: 'Playfair display';
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .music-card>.info>.artist {
+        font-family: 'Source sans pro';
+        color: #cfcfcf;
+        font-size: 0.8em;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
 </style>
+@* Rest Api view *@
 
-
+@*
 <div class="flex-container">
 @foreach(var track in Model)
 {
-    <partial name="_TrackCardPartial" model="@track" />
+<partial name="_TrackCardPartial" model="@track" />
 }
+</div> *@
+
+@* Ajax view *@
+
+
+<div id="items-list" class="flex-container">
+
 </div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+
+    // Make an AJAX request to the GraphQL endpoint
+    $.ajax({
+        url: 'http://localhost:5202/graphql',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            query: `
+                query{
+                    tracks{
+                        trackName
+                    }
+                }
+            `
+        }),
+        success: function (response) {
+            // Handle successful response
+            var items = response.data.tracks;
+    @* console.log(response.data.tracks) *@
+                // Do something with the items, such as display them on the page
+                displayItems(items);
+        },
+        error: function (xhr, status, error) {
+            // Handle error
+            console.error('Error:', error);
+        }
+    });
+
+
+    function displayItems(items) {
+        var itemsList = document.getElementById('items-list');
+        itemsList.innerHTML = ''; 
+        items.forEach(function (item) {
+            var musicCard = document.createElement('div');
+            musicCard.classList.add('music-card');
+
+            var imageDiv = document.createElement('div');
+            imageDiv.classList.add('image');
+
+            var image = document.createElement('img');
+            image.src = "images/audio-7276511_640.jpg";
+
+            imageDiv.appendChild(image);
+
+            var waveDiv1 = document.createElement('div');
+            waveDiv1.classList.add('wave');
+
+            var waveDiv2 = document.createElement('div');
+            waveDiv2.classList.add('wave');
+
+            var waveDiv3 = document.createElement('div');
+            waveDiv3.classList.add('wave');
+
+            var infoDiv = document.createElement('div');
+            infoDiv.classList.add('info');
+
+            var title = document.createElement('h2');
+            title.classList.add('title');
+            title.textContent = item.trackName; 
+
+            var author = document.createElement('author');
+            author.classList.add('artist');
+            author.textContent = "artistname";
+
+            infoDiv.appendChild(title);
+            infoDiv.appendChild(author);
+
+            musicCard.appendChild(imageDiv);
+            musicCard.appendChild(waveDiv1);
+            musicCard.appendChild(waveDiv2);
+            musicCard.appendChild(waveDiv3);
+            musicCard.appendChild(infoDiv);
+
+            itemsList.appendChild(musicCard);
+        });
+    }
+</script>

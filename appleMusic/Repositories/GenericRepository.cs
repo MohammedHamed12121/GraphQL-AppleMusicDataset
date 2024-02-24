@@ -20,7 +20,10 @@ public GenericRepository(ApplicationDbContext context)
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             // display only 10 for now
-            return await _context.Set<T>().Take(12).AsNoTracking().ToListAsync();
+            return await _context.Set<T>()
+                                .Take(12)
+                                .AsNoTracking()
+                                .ToListAsync();
         }
 
         public async Task<IEnumerable<T>> GetAllWithIncludeAsync(params Expression<Func<T, object>>[] includeProperaties)
