@@ -11,5 +11,7 @@ namespace appleMusic.Interfaces
         public Task<IEnumerable<T>> GetAllAsync();
         public Task<T> GetByIdAsync(int id);
         public Task<IEnumerable<T>> GetWithConditionAsync(Expression<Func<T,bool>> expression);
+        public Task<IEnumerable<T>> GetAllWithIncludeAsync(params Expression<Func<T,object>>[] includeProperaties);
+
     }
 }

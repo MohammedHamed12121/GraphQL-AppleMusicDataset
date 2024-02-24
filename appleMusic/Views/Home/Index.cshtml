@@ -2,7 +2,18 @@
     ViewData["Title"] = "Home Page";
 }
 
+<style>
+    .flex-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+</style>
+
+
+<div class="flex-container">
 @foreach(var track in Model)
 {
-    <p>@track.TrackName</p>
+    <partial name="_TrackCardPartial" model="@track" />
 }
+</div>

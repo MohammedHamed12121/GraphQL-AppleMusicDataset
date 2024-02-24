@@ -19,7 +19,7 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var tracks = await _trackRepo.GetAllAsync();
+        var tracks = await _trackRepo.GetAllWithIncludeAsync(t => t.Artist);
         return View(tracks);
     }
 
