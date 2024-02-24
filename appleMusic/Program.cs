@@ -4,6 +4,9 @@ using appleMusic.Data;
 using appleMusic;
 using appleMusic.Models;
 using System.Text.Json;
+using SQLitePCL;
+using appleMusic.Interfaces;
+using appleMusic.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,41 +20,40 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddScoped<CsvReader>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
 var app = builder.Build();
 
 
 
 
-CsvReader csvReader = new CsvReader();
-string filePath = "apple_music_dataset.csv";
+// app.Map("/artist", ctx =>
+// {
+//     ctx.Run(async context =>
+//     {
+//         await context.Response.WriteAsync(JsonSerializer.Serialize(artists));
+//     });
+// });
 
-// Read 
-List<Artist> artists = csvReader.Read<Artist>(filePath);
-List<Collection> collections = csvReader.Read<Collection>(filePath);
-List<Track> tracks = csvReader.Read<Track>(filePath);
+// app.Map("/collections", ctx =>
+// {
+//     ctx.Run(async context =>
+//     {
+//         await context.Response.WriteAsync(JsonSerializer.Serialize(collections));
+//     });
+// });
+// app.Map("/tracks", ctx =>
+// {
+//     ctx.Run(async context =>
+//     {
+//         await context.Response.WriteAsync(JsonSerializer.Serialize(tracks));
+//     });
+// });
 
-app.Map("/artist", ctx =>
-{
-    ctx.Run(async context =>
-    {
-        await context.Response.WriteAsync(JsonSerializer.Serialize(artists));
-    });
-});
 
-app.Map("/collections", ctx =>
-{
-    ctx.Run(async context =>
-    {
-        await context.Response.WriteAsync(JsonSerializer.Serialize(collections));
-    });
-});
-app.Map("/tracks", ctx =>
-{
-    ctx.Run(async context =>
-    {
-        await context.Response.WriteAsync(JsonSerializer.Serialize(tracks));
-    });
-});
+
+
 
 
 

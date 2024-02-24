@@ -1,21 +1,26 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using appleMusic.Models;
+using appleMusic.Interfaces;
 
 namespace appleMusic.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IGenericRepository<Track> _trackRepo;
 
-    public HomeController(ILogger<HomeController> logger)
+
+    public HomeController(ILogger<HomeController> logger, IGenericRepository<Track> trackRepo)
     {
         _logger = logger;
+        _trackRepo = trackRepo;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var tracks = await _trackRepo.GetAllAsync();
+        return View(tracks);
     }
 
     public IActionResult Privacy()

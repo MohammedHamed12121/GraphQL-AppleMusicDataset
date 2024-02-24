@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using appleMusic.Data;
 
@@ -10,9 +11,11 @@ using appleMusic.Data;
 namespace appleMusic.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240214112314_AddingTracksArtistCollections")]
+    partial class AddingTracksArtistCollections
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.11");
@@ -215,21 +218,21 @@ namespace appleMusic.Data.Migrations
 
             modelBuilder.Entity("appleMusic.Models.Artist", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ArtistId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ArtistName")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("ArtistId");
 
                     b.ToTable("Artists");
                 });
 
             modelBuilder.Entity("appleMusic.Models.Collection", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CollectionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -257,7 +260,7 @@ namespace appleMusic.Data.Migrations
                     b.Property<int>("TrackCount")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+                    b.HasKey("CollectionId");
 
                     b.HasIndex("ArtistId");
 
@@ -266,7 +269,7 @@ namespace appleMusic.Data.Migrations
 
             modelBuilder.Entity("appleMusic.Models.Track", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("TrackId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -306,7 +309,7 @@ namespace appleMusic.Data.Migrations
                     b.Property<int>("TrackTimeMillis")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
+                    b.HasKey("TrackId");
 
                     b.HasIndex("ArtistId");
 
