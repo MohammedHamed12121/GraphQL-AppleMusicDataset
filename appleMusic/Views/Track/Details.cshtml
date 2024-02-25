@@ -1,0 +1,393 @@
+@model Track
+@{
+    ViewData["Title"] = "Details";
+}
+@* https://codepen.io/genarocolusso/pen/ozvamp *@
+
+<style>
+    @@import 'https://fonts.googleapis.com/css?family=Open+Sans:300,400';
+
+    .container,
+    .player .head .front,
+    .player .head .infos,
+    .player .timeline .volume,
+    .player .timeline .controllers,
+    .player .timeline .controllers .back,
+    .player .timeline .controllers .play,
+    .player .timeline .controllers .forward {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    @* html {
+        height: 100%;
+    } *@
+
+    body {
+        font-family: 'Open Sans', sans-serif;
+        width: 100%;
+        min-height: 100%;
+        background: linear-gradient(141deg, #0C5B5F 0%, rgba(0, 212, 153, 0.77) 75%);
+    }
+
+    *,
+    *:before,
+    *:after {
+        box-sizing: border-box;
+    }
+
+    .rotation {
+        display: block;
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -150px -150px;
+        border-radius: 50%;
+        background-color: #fff;
+        opacity: 0.3;
+        z-index: -1;
+        animation: 2s girandomt infinite forwards linear;
+    }
+
+    .player {
+        border-radius: 6px;
+        background-color: white;
+        width: 500px;
+        min-height: 200px;
+        box-shadow: 0px 5px 20px 2px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+
+    .player .head {
+        padding: 15px;
+        color: white;
+        text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.3);
+        height: auto;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .player .head .front {
+        position: relative;
+        height: 100%;
+        justify-content: space-around;
+    }
+
+    .player .head .back {
+        height: 110%;
+        width: 110%;
+        top: -10px;
+        left: -10px;
+        position: absolute;
+        background-position: center;
+        background-size: cover;
+        background-image: url('https://images.unsplash.com/photo-1471623817296-aa07ae5c9f47');
+        -webkit-filter: blur(5px);
+        filter: blur(5px);
+    }
+
+    .player .head .avatar {
+        width: 90px;
+        height: 90px;
+        overflow: hidden;
+        border-radius: 50%;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .player .head .avatar img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .player .head .infos {
+        justify-content: space-around;
+        flex-direction: column;
+        height: inherit;
+        align-items: baseline;
+    }
+
+    .player .head .tags span {
+        border-radius: 3px;
+        padding: 2px 11px;
+        margin: 1px 2px;
+        background-color: #15A58B;
+        font-weight: bold;
+    }
+
+    .player .head .titulo_song {
+        font-size: 20px;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.75);
+    }
+
+    .player .head .duracao_song {
+        font-size: 12px;
+        color: white;
+        margin-bottom: 8px;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.75);
+    }
+
+    .player .timeline {
+        height: auto;
+        width: 100%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .player .timeline .volume {
+        flex-direction: row;
+    }
+
+    .player .timeline .controllers.active .play {
+        box-shadow: 0px 0px 10px 2px rgba(30, 177, 150, 0.1);
+        animation: 3s pulseshadowplay infinite both;
+    }
+
+    .player .timeline .controllers .back,
+    .player .timeline .controllers .play,
+    .player .timeline .controllers .forward {
+        font-size: 16px;
+        margin: 10px;
+        color: #4A4A4A;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid transparent;
+    }
+
+    .player .timeline .controllers .play {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .player .timeline .controllers .play:hover {
+        box-shadow: 0px 0px 10px 2px rgba(30, 177, 150, 0.38);
+        border: 2px solid rgba(143, 208, 196, 0.54) !important;
+    }
+
+    .player .timeline .controllers .back::after {
+        content: '\f04a';
+        font-family: 'FontAwesome';
+        margin-right: 5px;
+    }
+
+    .player .timeline .controllers .play::after {
+        content: '\f04b';
+        font-family: 'FontAwesome';
+        margin-left: 5px;
+    }
+
+    .player .timeline .controllers .forward::after {
+        content: '\f04e';
+        font-family: 'FontAwesome';
+        margin-left: 5px;
+    }
+
+    .player .timeline .soundline {
+        width: 100%;
+        height: 6px;
+        position: relative;
+        background: #F3F3F3;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .player .timeline .soundline::after {
+        display: block;
+        position: absolute;
+        content: '';
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 100%;
+        background: #6CE59C;
+        box-shadow: 0px 0px 9px #94FFBF;
+        transition: all 0.4s cubic-bezier(0.07, 0.82, 0.11, 1.02);
+        animation: 20s soundline infinite both linear;
+    }
+
+    @@keyframes pulseshadowplay {
+        0% {
+            box-shadow: 0px 0px 10px 2px rgba(30, 177, 150, 0.1);
+        }
+
+        50% {
+            box-shadow: 0px 0px 50px 2px rgba(30, 177, 150, 0.38);
+        }
+    }
+
+    @@keyframes soundline {
+        0% {
+            width: 0%;
+        }
+
+        100% {
+            width: 100%;
+        }
+    }
+
+    @@keyframes girandomt {
+        0% {
+            box-shadow: 0px 0px 0px 0px rgba(255, 255, 255, 0.8);
+        }
+
+        100% {
+            box-shadow: 0px 0px 30px 40px rgba(255, 255, 255, 0);
+        }
+    }
+</style>
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <h2 id="track-name-header"></h2>
+            
+            <h3 id="artistname"></h3>
+            <hr>
+            <p id="price"></p>
+            <hr>
+            <p id="track-number">track number : </p>
+            <hr>
+            <p id="disc-number">Dics number : </p>
+            <hr>
+            <p id="track-explictness">track explictness : </p>
+            <hr>
+        </div>
+
+
+        <div class="col-4">
+            <div class="player">
+                <div class="head">
+                    <div class="back"></div>
+                    <div class="front">
+                        <div class="avatar"><img src="~/images/audio-7276511_640.jpg" /></div>
+                        <div class="infos">
+                            <div class="titulo_song" id='div-trackname'>Trackname</div>
+                            <div class="duracao_song" id="total-time"><i class="fa fa-clock-o"> Total time : </i></div>
+                            <div class="tags"><span id="kind">Kind</span> <span id="price-span">Price: TrackPrice$</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline">
+                    <audio controls id='track-audio' class="controllers" style="width: 100%;">
+                        <source id="audio" src="" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </div>
+        <div class="rotation"></div>
+
+
+
+    </div>
+</div>
+</div>
+
+
+
+
+
+
+
+<div id="items-list" class="flex-container">
+
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    var url = window.location.href;
+        var id = url.split('/')[5];
+
+        // Make an AJAX request to the GraphQL endpoint
+        $.ajax({
+        url: 'http://localhost:5202/graphql',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+        query: `
+        query{
+        track(id: ${id}){
+        id,
+        trackName,
+        trackTimeMillis,
+        kind,
+        trackPrice,
+        trackNumber,
+        discNumber,
+        trackExplicitness,
+        previewUrl,
+        artist{
+            artistName
+        }
+        }
+        }
+        `
+        }),
+        success: function (response) {
+        var item = response.data.track;
+        displayItems(item);
+        },
+        error: function (xhr, status, error) {
+        // Handle error
+        console.error('Error:', error);
+        }
+        });
+
+
+        function displayItems(items) {
+            @* track name header *@
+            var trackNameHeader = document.getElementById('track-name-header');
+            trackNameHeader.textContent = items.trackName;
+            @* div track name *@
+            var divTrackName = document.getElementById('div-trackname');
+            divTrackName.textContent = items.trackName;
+
+            @* artist name *@
+            var artistHeader = document.getElementById('artistname');
+            artistHeader.textContent = 'Artist name : ' +items.artist.artistName;
+
+            @* track kind span *@
+            var kindspan = document.getElementById('kind');
+            kindspan.textContent = items.kind;
+
+            @* track price *@
+            var pricePragraph = document.getElementById('price');
+            pricePragraph.textContent = 'Price : '+items.trackPrice+'$';
+
+            @* price span *@
+            var priceSpan = document.getElementById('price-span');
+            priceSpan.textContent = 'Price : '+items.trackPrice+ '$';
+
+            @* track number *@
+            var trackNumberParagraph = document.getElementById('track-number');
+            trackNumberParagraph.textContent = 'track number : '+items.trackNumber;
+
+            @* track disc number *@
+            var discNumber = document.getElementById('disc-number');
+            discNumber.textContent = 'Dics number : '+items.discNumber;
+
+            @* track explictness *@
+            var trackExplictness = document.getElementById('track-explictness');
+            trackExplictness.textContent = 'track explictness : '+items.trackExplicitness;
+
+            @* total time *@
+            var totalTime = document.getElementById('total-time');
+            totalTime.textContent = 'Total time : '+(items.trackTimeMillis/60000);
+
+           
+            @* the audio *@
+            var audioElement = document.getElementById('track-audio');
+            var sourceElement = document.getElementById('audio');
+            @* var srcValue = sourceElement.getAttribute('src'); *@
+            sourceElement.setAttribute('src', items.previewUrl);
+            audioElement.load();
+        }
+
+</script>

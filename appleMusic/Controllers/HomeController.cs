@@ -23,6 +23,8 @@ public class HomeController : Controller
         return View(tracks);
     }
 
+    
+
     public IActionResult Privacy()
     {
         return View();

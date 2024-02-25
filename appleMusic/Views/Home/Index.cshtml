@@ -129,6 +129,7 @@
             query: `
                 query{
                     tracks{
+                        id,
                         trackName
                     }
                 }
@@ -137,7 +138,7 @@
         success: function (response) {
             // Handle successful response
             var items = response.data.tracks;
-    @* console.log(response.data.tracks) *@
+    console.log(response.data.tracks)
                 // Do something with the items, such as display them on the page
                 displayItems(items);
         },
@@ -152,8 +153,11 @@
         var itemsList = document.getElementById('items-list');
         itemsList.innerHTML = ''; 
         items.forEach(function (item) {
-            var musicCard = document.createElement('div');
+            var url = '/Track/Details/' +  item.id;
+
+            var musicCard = document.createElement('a');
             musicCard.classList.add('music-card');
+            musicCard.setAttribute('href', url);
 
             var imageDiv = document.createElement('div');
             imageDiv.classList.add('image');

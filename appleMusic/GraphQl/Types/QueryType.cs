@@ -14,6 +14,10 @@ namespace appleMusic.GraphQl.Types
             descriptor
                 .Field(f => f.GetTracks(default!))
                 .Type<ListType<TrackType>>();
+
+            descriptor
+                .Field(f => f.GetTrack(default!, default!))
+                .Type<TrackType>();
         }
     }
 

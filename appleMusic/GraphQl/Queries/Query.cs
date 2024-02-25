@@ -14,5 +14,13 @@ namespace appleMusic.Queries
         {
             return await tracksService.GetAllAsync();
         }       
+
+        public async Task<Track> GetTrack([Service]IGenericRepository<Track> tracksService, int id)
+        {
+            return await tracksService.GetWithConditionAsync(
+                t=> t.Id == id,
+                t => t.Artist
+            );
+        }
     }
 }

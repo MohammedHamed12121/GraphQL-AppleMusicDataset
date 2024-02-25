@@ -12,7 +12,7 @@ namespace appleMusic.Repositories
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly ApplicationDbContext _context;
-public GenericRepository(ApplicationDbContext context)
+        public GenericRepository(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -29,22 +29,27 @@ public GenericRepository(ApplicationDbContext context)
         public async Task<IEnumerable<T>> GetAllWithIncludeAsync(params Expression<Func<T, object>>[] includeProperaties)
         {
             IQueryable<T> query = _context.Set<T>();
-            foreach(var includeProperaty in includeProperaties)
+            foreach (var includeProperaty in includeProperaties)
             {
-                query = query.Include(includeProperaty); 
+                query = query.Include(includeProperaty);
             }
             return await query.Take(12).AsNoTracking().ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public  async Task<T> GetByIdAsync(int id)
         {
             return await _context.Set<T>().FindAsync(id);
-        
         }
 
-        public async Task<IEnumerable<T>> GetWithConditionAsync(Expression<Func<T,bool>> expression)
+        public async Task<T> GetWithConditionAsync(Expression<Func<T, bool>> expression, params Expression<Func<T,object>>[] includeProperaties)
         {
-            return await _context.Set<T>().Where(expression).ToListAsync();
+            // return await _context.Set<T>().Where(expression).ToListAsync();
+            IQueryable<T> query = _context.Set<T>();
+            foreach (var includeProperaty in includeProperaties)
+            {
+                query = query.Include(includeProperaty);
+            }
+            return await query.Where(expression).FirstOrDefaultAsync();
         }
     }
 }

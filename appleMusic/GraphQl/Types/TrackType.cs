@@ -23,6 +23,14 @@ namespace appleMusic.GraphQl.Types
             descriptor
                 .Field(f => f.TrackCensoredName)
                 .Type<StringType>();
+
+            descriptor
+                .Field(f => f.TrackTimeMillis)
+                .Type<LongType>();
+
+            descriptor
+                .Field(f => f.Artist.ArtistName)
+                .Type<StringType>();
         }
     }
 }
